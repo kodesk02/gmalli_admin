@@ -47,3 +47,32 @@ export interface Product {
   description?: string;
   tags?: string[];
 }
+
+export type OrderType = "delivery" | "pickup";
+export type OrderStatusTrack =
+  | "pending"
+  | "confirmed"
+  | "ready"
+  | "delivered"
+  | "cancelled";
+export type FilterTab = "all" | "delivery" | "pickup" | "completed";
+
+export interface OrderItem {
+  name: string;
+  qty: number;
+  price: number;
+}
+
+export interface Order {
+  id: string;
+  type: OrderType;
+  customer: string;
+  phone: string;
+  address?: string;
+  pickupCode?: string;
+  items: number;
+  total: number;
+  status: OrderStatusTrack;
+  date: string;
+  orderItems: OrderItem[];
+}

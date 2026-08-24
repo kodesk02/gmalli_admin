@@ -27,7 +27,7 @@ export function Header() {
   const title = getTitle(pathname);
 
   return (
-    <header className="flex items-center justify-between px-8 py-6 bg-transparent">
+    <header className="flex print:hidden items-center justify-between px-8 py-6 bg-transparent">
       <h1 className="text-2xl font-bold text-primary">{title}</h1>
 
       <div className="flex items-center gap-4">

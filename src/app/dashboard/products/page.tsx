@@ -6,7 +6,7 @@ import { Search, Plus, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import { initialProducts } from "@/lib/data";
 import Image from "next/image";
 import { AddProductModal } from "@/components/products/modals/AddProductModal";
-
+import { SearchInput } from "@/components/SearchInput";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -19,23 +19,18 @@ export default function ProductsPage() {
     (p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase())
+      p.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <div className="space-y-6">
       {/* Search Bar & Add Button Row */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="relative w-full sm:w-96">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search products, brands, or SKUs..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-[#FFFDF9] rounded-2xl border border-[#8B0000]/30 text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#8B0000]"
-          />
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search products, brands, or SKUs..."
+        />
 
         <button
           onClick={() => setIsModalOpen(true)}
@@ -63,7 +58,9 @@ export default function ProductsPage() {
               {filteredProducts.map((product) => (
                 <tr
                   key={product.id}
-                  onClick={() => router.push(`/dashboard/products/${product.id}`)}
+                  onClick={() =>
+                    router.push(`/dashboard/products/${product.id}`)
+                  }
                   className="hover:bg-gray-50/60 cursor-pointer transition-colors"
                 >
                   {/* Product Column */}
@@ -78,15 +75,23 @@ export default function ProductsPage() {
                           height={100}
                         />
                       </div>
-                      <span className="font-bold text-text-primary">{product.name}</span>
+                      <span className="font-bold text-text-primary">
+                        {product.name}
+                      </span>
                     </div>
                   </td>
 
-                  <td className="py-4 px-6 font-medium text-gray-600">{product.brand}</td>
+                  <td className="py-4 px-6 font-medium text-gray-600">
+                    {product.brand}
+                  </td>
 
-                  <td className="py-4 px-6 font-medium text-gray-600">{product.category}</td>
+                  <td className="py-4 px-6 font-medium text-gray-600">
+                    {product.category}
+                  </td>
 
-                  <td className="py-4 px-6 font-bold text-text-primary">{product.price}</td>
+                  <td className="py-4 px-6 font-bold text-text-primary">
+                    {product.price}
+                  </td>
 
                   <td className="py-4 px-6">
                     <span
@@ -101,10 +106,15 @@ export default function ProductsPage() {
                   </td>
 
                   {/* Actions Dropdown */}
-                  <td className="py-4 px-6 text-right relative" onClick={(e) => e.stopPropagation()}>
+                  <td
+                    className="py-4 px-6 text-right relative"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       onClick={() =>
-                        setActiveDropdown(activeDropdown === product.id ? null : product.id)
+                        setActiveDropdown(
+                          activeDropdown === product.id ? null : product.id,
+                        )
                       }
                       className="p-2 text-gray-400 hover:text-gray-700 rounded-lg transition-colors"
                     >
@@ -114,25 +124,33 @@ export default function ProductsPage() {
                     {activeDropdown === product.id && (
                       <div className="absolute right-6 top-12 w-36 bg-[#FFFDF9] border border-gray-100 rounded-xl shadow-lg z-20 py-1.5 text-left">
                         <button
-                          onClick={() => router.push(`/dashboard/products/${product.id}`)}
+                          onClick={() =>
+                            router.push(`/dashboard/products/${product.id}`)
+                          }
                           className="w-full px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                         >
-                          <Eye className="w-3.5 h-3.5 text-gray-500" /> View Details
+                          <Eye className="w-3.5 h-3.5 text-gray-500" /> View
+                          Details
                         </button>
                         <button
-                          onClick={() => router.push(`/dashboard/products/${product.id}`)}
+                          onClick={() =>
+                            router.push(`/dashboard/products/${product.id}`)
+                          }
                           className="w-full px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                         >
                           <Edit className="w-3.5 h-3.5 text-gray-500" /> Edit
                         </button>
                         <button
                           onClick={() => {
-                            setProducts(products.filter((p) => p.id !== product.id));
+                            setProducts(
+                              products.filter((p) => p.id !== product.id),
+                            );
                             setActiveDropdown(null);
                           }}
                           className="w-full px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2"
                         >
-                          <Trash2 className="w-3.5 h-3.5 text-rose-600" /> Delete
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />{" "}
+                          Delete
                         </button>
                       </div>
                     )}
@@ -162,7 +180,10 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <AddProductModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
