@@ -55,7 +55,8 @@ export default function ProductDetailPage({
         {/* Left Column: Product Image */}
         <div className="lg:col-span-5 bg-[#FFFDF9] p-6 rounded-2xl border border-gray-100 shadow-xs flex items-center justify-center">
           <div className="w-full h-80 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 relative">
-            <Image
+            {product.image && (
+ <Image
               src={product.image}
               alt={product.name}
               fill
@@ -63,6 +64,8 @@ export default function ProductDetailPage({
               sizes="(max-width: 768px) 100vw, 400px"
               priority
             />
+            ) }
+           
           </div>
         </div>
 

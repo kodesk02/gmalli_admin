@@ -1,10 +1,11 @@
-import { LucideIcon, TrendingUp, AlertCircle } from "lucide-react";
+import { LucideIcon, TrendingUp, AlertCircle, LucideProps } from "lucide-react";
+import { ComponentType } from "react";
 
 interface StatCardProps {
   title: string;
   value: string;
   change: string;
-  icon: LucideIcon;
+  icon: LucideIcon | ComponentType<LucideProps>;
   isWarning?: boolean;
   isRealtime?: boolean;
 }
@@ -21,10 +22,10 @@ export function StatCard({
     <div className="relative bg-[#FFFDF9] p-5 rounded-2xl border border-[#EFE6DC] shadow-xs flex justify-between items-start overflow-hidden">
       
       <div className="space-y-2 relative z-10">
-        <span className="text-[11px] font-bold text-[#8A6865] tracking-wider uppercase">
+        <span className="text-[11px] font-bold text-text-muted tracking-wider uppercase">
           {title}
         </span>
-        <p className="text-3xl font-extrabold text-[#6F352E] tracking-tight">{value}</p>
+        <p className="text-3xl font-extrabold text-text-primary tracking-tight">{value}</p>
 
         <div className="flex items-center gap-1.5 text-xs font-semibold">
           {!isWarning && !isRealtime && (
