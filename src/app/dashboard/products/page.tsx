@@ -118,7 +118,7 @@ export default function ProductsPage() {
                       setActiveDropdown(activeDropdown === product.id ? null : product.id)
                     }
                     onToggleStock={() =>
-                      toggleStock({ id: product.id, inStock: !product.in_stock })
+                      toggleStock({ id: product.id, in_stock: !product.in_stock })
                     }
                     onDelete={() => handleDelete(product.id, product.name)}
                   />

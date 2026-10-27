@@ -13,7 +13,7 @@ interface AddProductModalProps {
 export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [inStock, setInStock] = useState(true);
+  const [in_stock, setIn_stock] = useState(true);
   const { mutate: createProduct, isPending } = useCreateProduct();
 
   if (!isOpen) return null;
@@ -29,9 +29,10 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
         category: data.get("category") as string,
         price: Number(data.get("price")),
         price_range: (data.get("price_range") as string) || null,
-        in_stock: inStock,
+        in_stock: in_stock,
         tags: tags,
         image: null,
+        description: data.get("description") as string,
       },
       { onSuccess: onClose }
     );
@@ -216,14 +217,14 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
 
                   <button
                     type="button"
-                    onClick={() => setInStock(!inStock)}
+                    onClick={() => setIn_stock(!in_stock)}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                      inStock ? "bg-[#8B0000]" : "bg-gray-200"
+                      in_stock ? "bg-[#8B0000]" : "bg-gray-200"
                     }`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-[#FFFDF9] shadow-lg ring-0 transition duration-200 ease-in-out ${
-                        inStock ? "translate-x-5" : "translate-x-0"
+                        in_stock ? "translate-x-5" : "translate-x-0"
                       }`}
                     />
                   </button>

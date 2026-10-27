@@ -71,12 +71,12 @@ export function useToggleStock() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, inStock }: { id: string; inStock: boolean }) =>
+    mutationFn: ({ id, in_stock }: { id: string; in_stock: boolean }) =>
       api
-        .patch<{ product: Product }>(`/admin/products/${id}/stock`, { in_stock: inStock })
+        .patch<{ product: Product }>(`/admin/products/${id}/stock`, { in_stock: in_stock })
         .then((r) => r.product),
 
-    onMutate: async ({ id, inStock }) => {
+    onMutate: async ({ id, in_stock }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.products.lists() });
 
       const snapshots = queryClient.getQueriesData<ProductsPage>({
@@ -89,7 +89,7 @@ export function useToggleStock() {
           old && {
             ...old,
             products: old.products.map((p) =>
-              p.id === id ? { ...p, in_stock: inStock } : p
+              p.id === id ? { ...p, in_stock: in_stock } : p
             ),
           }
       );

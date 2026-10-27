@@ -72,7 +72,7 @@ export default function ProductDetailPage({
           {/* Header & Status */}
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-[#8A6865] tracking-wider uppercase flex items-center gap-1.5">
+              <span className="text-[10px] font-bold text-text-muted tracking-wider uppercase flex items-center gap-1.5">
                 <Layers className="w-3 h-3 text-[#8B0000]" /> {product.category}
               </span>
               <h1 className="text-2xl font-bold text-text-primary">{product.name}</h1>
@@ -84,12 +84,12 @@ export default function ProductDetailPage({
 
             <span
               className={`px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider uppercase shrink-0 ${
-                product.inStock
+                product.in_stock
                   ? "bg-emerald-100/80 text-emerald-700"
                   : "bg-rose-100/80 text-rose-700"
               }`}
             >
-              {product.inStock ? "IN STOCK" : "OUT OF STOCK"}
+              {product.in_stock ? "IN STOCK" : "OUT OF STOCK"}
             </span>
           </div>
 
@@ -98,10 +98,10 @@ export default function ProductDetailPage({
             <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
               UNIT PRICE
             </p>
-            <p className="text-2xl font-bold text-[#8B0000]">{product.price}</p>
-            {product.bulkPrice && (
+            <p className="text-2xl font-bold text-[#8B0000]">₦{product.price.toLocaleString()}</p>
+            {product.price_range && (
               <p className="text-xs text-gray-500 font-medium">
-                Bulk Range: <span className="text-gray-700 font-semibold">{product.bulkPrice}</span>
+                Price Range: <span className="text-gray-700 font-semibold">{product.price_range}</span>
               </p>
             )}
           </div>
@@ -121,7 +121,7 @@ export default function ProductDetailPage({
           {/* Tags */}
           {product.tags && product.tags.length > 0 && (
             <div className="space-y-2">
-              <p className="text-[10px] font-bold text-[#8A6865] uppercase tracking-wider flex items-center gap-1">
+              <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1">
                 <Tag className="w-3 h-3" /> TAGS
               </p>
               <div className="flex flex-wrap gap-2">
