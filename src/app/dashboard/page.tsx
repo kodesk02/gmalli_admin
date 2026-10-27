@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { 
-  AlertTriangle,
-  ArrowRight
-} from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { lowStockItems, recentOrders, stats } from "@/lib/data";
 import { StatCard } from "@/components/dashboard/StatCard";
 
@@ -25,13 +22,15 @@ export default function DashboardOverviewPage() {
 
       <div className="bg-[#FAF5F0] p-6 rounded-xl border border-gray-100 shadow-xs space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-[#6F352E]">Performance (7 Days)</h2>
-          <Link
+          <h2 className="text-lg font-bold text-text-primary">
+            Performance (7 Days)
+          </h2>
+          {/* <Link
             href="/dashboard/analytics"
             className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-gray-900 tracking-wider"
           >
             DETAILS <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          </Link> */}
         </div>
 
         <div className="h-48 flex items-end justify-between gap-4 pt-8 px-4">
@@ -44,22 +43,28 @@ export default function DashboardOverviewPage() {
             { day: "SAT", height: "h-40" },
             { day: "SUN", height: "h-44" },
           ].map((bar) => (
-            <div key={bar.day} className="flex-1 flex flex-col items-center gap-3">
-              <div className={`w-full bg-[#C88A85] rounded-lg ${bar.height} transition-all hover:bg-[#8B0000]`} />
-              <span className="text-[10px] font-bold text-gray-400">{bar.day}</span>
+            <div
+              key={bar.day}
+              className="flex-1 flex flex-col items-center gap-3"
+            >
+              <div
+                className={`w-full bg-[#C88A85] rounded-lg ${bar.height} transition-all hover:bg-[#8B0000]`}
+              />
+              <span className="text-[10px] font-bold text-gray-400">
+                {bar.day}
+              </span>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         <div className="lg:col-span-2 bg-[#FAF5F0] p-6 rounded-xl border border-gray-100 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-[#6F352E]">Recent Orders</h2>
+            <h2 className="text-lg font-bold text-text-primary">Recent Orders</h2>
             <Link
               href="/dashboard/orders"
-              className="px-3 py-1.5 text-xs font-bold bg-[#8B0000] text-[#FAF5F0] rounded-lg hover:bg-[#A52020] transition-colors tracking-wider"
+              className="px-3 py-1.5 text-xs font-bold bg-[#8B0000] text-[#FAF5F0] rounded-lg hover:bg-brand-red-light transition-colors tracking-wider"
             >
               VIEW ALL
             </Link>
@@ -78,9 +83,15 @@ export default function DashboardOverviewPage() {
               <tbody className="divide-y divide-gray-50">
                 {recentOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50/50">
-                    <td className="py-4 px-2 font-bold text-primary">{order.id}</td>
-                    <td className="py-4 px-2 font-medium text-gray-700">{order.customer}</td>
-                    <td className="py-4 px-2 font-bold text-primary">{order.amount}</td>
+                    <td className="py-4 px-2 font-bold text-primary">
+                      {order.id}
+                    </td>
+                    <td className="py-4 px-2 font-medium text-gray-700">
+                      {order.customer}
+                    </td>
+                    <td className="py-4 px-2 font-bold text-primary">
+                      {order.amount}
+                    </td>
                     <td className="py-4 px-2">
                       <span
                         className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider ${
@@ -106,7 +117,9 @@ export default function DashboardOverviewPage() {
                 <div className="p-1.5 rounded-lg bg-rose-100 text-rose-600">
                   <AlertTriangle className="w-4 h-4" />
                 </div>
-                <h2 className="text-base font-bold text-primary">Low Stock Alerts</h2>
+                <h2 className="text-base font-bold text-primary">
+                  Low Stock Alerts
+                </h2>
               </div>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-600">
                 12 ITEMS
@@ -125,9 +138,15 @@ export default function DashboardOverviewPage() {
                       📦
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-primary">{item.name}</p>
-                      <p className="text-[10px] text-gray-400 font-medium">{item.sku}</p>
-                      <p className="text-[10px] font-bold text-rose-600 mt-0.5">{item.stock}</p>
+                      <p className="text-xs font-bold text-primary">
+                        {item.name}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-medium">
+                        {item.sku}
+                      </p>
+                      <p className="text-[10px] font-bold text-rose-600 mt-0.5">
+                        {item.stock}
+                      </p>
                     </div>
                   </div>
                   <button className="text-[10px] font-bold text-gray-600 hover:text-gray-900 tracking-wider">
@@ -145,7 +164,6 @@ export default function DashboardOverviewPage() {
             VIEW ALL INVENTORY
           </Link>
         </div>
-
       </div>
     </div>
   );

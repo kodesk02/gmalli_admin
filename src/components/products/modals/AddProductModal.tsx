@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { X, UploadCloud, Tag, Save, ChevronDown } from "lucide-react";
+import { X, Tag, Save, ChevronDown } from "lucide-react";
 import { ImageUploadSection } from "../ImageSelection";
+import { useCreateProduct } from "@/hooks/useProducts";
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -13,8 +14,28 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [inStock, setInStock] = useState(true);
+  const { mutate: createProduct, isPending } = useCreateProduct();
 
   if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+
+    createProduct(
+      {
+        name: data.get("name") as string,
+        brand: data.get("brand") as string,
+        category: data.get("category") as string,
+        price: Number(data.get("price")),
+        price_range: (data.get("price_range") as string) || null,
+        in_stock: inStock,
+        tags: tags,
+        image: null,
+      },
+      { onSuccess: onClose }
+    );
+  };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim()) {
@@ -25,6 +46,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
       setTagInput("");
     }
   };
+  
 
   const removeTag = (tagToRemove: string) => {
     setTags(tags.filter((t) => t !== tagToRemove));
@@ -32,15 +54,9 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand-red-muted/40 backdrop-blur-xs p-4 sm:p-6 overflow-hidden">
-      {/* 
-        Modal Container:
-        - max-h-[85vh] limits height to 85% of screen height
-        - flex flex-col separates header from scrollable content
-      */}
-      <div className="bg-brand-cream rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl p-6 sm:p-8">
-        {/* Fixed Header Row (Doesn't scroll out of view) */}
+      <form onSubmit={handleSubmit} className="bg-brand-cream rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl p-6 sm:p-8">
         <div className="flex items-center justify-between pb-4 border-b border-gray-100 shrink-0">
-          <h2 className="text-xl font-bold text-[#6F352E]">Add Product</h2>
+          <h2 className="text-xl font-bold text-text-primary">Add Product</h2>
           <button
             onClick={onClose}
             className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg transition-colors"
@@ -49,18 +65,11 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
           </button>
         </div>
 
-        {/* 
-          Scrollable Content Container:
-          - overflow-y-auto enables scrolling
-          - custom scrollbar rules (pr-2) prevent layout shift
-        */}
         <div className="overflow-y-auto pt-6 pr-1 space-y-6 flex-1">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: Basic Info & Pricing */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Basic Information Section */}
               <div className="border border-gray-100 rounded-2xl p-5 bg-[#FFFDF9] space-y-4">
-                <h3 className="text-sm font-bold text-[#6F352E]">
+                <h3 className="text-sm font-bold text-text-primary">
                   Basic Information
                 </h3>
 
@@ -110,7 +119,6 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                   </div>
                 </div>
 
-                {/* Tags Multi-select */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     TAGS (MULTI-SELECT)
@@ -127,7 +135,6 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                     <Tag className="w-4 h-4 text-gray-400 absolute right-3 pointer-events-none" />
                   </div>
 
-                  {/* Render Tags */}
                   <div className="flex flex-wrap gap-2 pt-1">
                     {tags.map((tag) => (
                       <span
@@ -148,9 +155,8 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                 </div>
               </div>
 
-              {/* Pricing & Details Section */}
               <div className="border border-gray-100 rounded-2xl p-5 bg-[#FFFDF9] space-y-4">
-                <h3 className="text-sm font-bold text-[#6F352E]">
+                <h3 className="text-sm font-bold text-text-primary">
                   Pricing & Details
                 </h3>
 
@@ -197,12 +203,12 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
 
               {/* Publishing Section */}
               <div className="border border-gray-100 rounded-2xl p-5 bg-[#FFFDF9] space-y-6">
-                <h3 className="text-sm font-bold text-[#6F352E]">Publishing</h3>
+                <h3 className="text-sm font-bold text-text-primary">Publishing</h3>
 
                 {/* Stock Toggle */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-bold text-[#6F352E]">In Stock</p>
+                    <p className="text-xs font-bold text-text-primary">In Stock</p>
                     <p className="text-[10px] text-gray-400">
                       Toggle product availability
                     </p>
@@ -230,7 +236,8 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
                     onClick={onClose}
                     className="w-full py-3 bg-[#8B0000] text-[#FFFDF9] text-xs font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#8B0000]/90 transition-colors"
                   >
-                    <Save className="w-4 h-4" /> Save / Publish
+                    <Save className="w-4 h-4" /> 
+                    {isPending ? "Publishing..." : "Publish"}
                   </button>
 
                   <button
@@ -245,7 +252,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             </div>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

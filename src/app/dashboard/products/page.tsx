@@ -2,36 +2,70 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Plus, MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
-import { initialProducts } from "@/lib/data";
-import Image from "next/image";
-import { AddProductModal } from "@/components/products/modals/AddProductModal";
+import { Plus } from "lucide-react";
 import { SearchInput } from "@/components/SearchInput";
+import { AddProductModal } from "@/components/products/modals/AddProductModal";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useProducts, useToggleStock, useDeleteProduct } from "@/hooks/useProducts";
+import { ProductRow } from "./ProductRow";
+
+const PAGE_SIZE = 10;
+const COLUMNS = ["PRODUCT", "BRAND", "CATEGORY", "PRICE", "STOCK STATUS"];
+
+function SkeletonRows() {
+  return Array.from({ length: 5 }).map((_, i) => (
+    <tr key={i}>
+      <td colSpan={6} className="py-4 px-6">
+        <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
+      </td>
+    </tr>
+  ));
+}
 
 export default function ProductsPage() {
   const router = useRouter();
-  const [products, setProducts] = useState(initialProducts);
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // The API is only called with the debounced value
+  const search = useDebounce(searchQuery);
+
+  const { data, isLoading, isError, error, refetch } = useProducts({
+    search,
+    page,
+    limit: PAGE_SIZE,
+  });
+  const { mutate: toggleStock } = useToggleStock();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  const products = data?.products ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(page * PAGE_SIZE, total);
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    setPage(1); // a new search always starts at page 1
+  };
+
+  const handleDelete = (id: string, name: string) => {
+    setActiveDropdown(null);
+    if (window.confirm(`Delete "${name}"? It will also disappear from the store.`)) {
+      deleteProduct(id);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Search Bar & Add Button Row */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <SearchInput
           value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder="Search products, brands, or SKUs..."
+          onChange={handleSearch}
+          placeholder="Search products or brands..."
         />
-
         <button
           onClick={() => setIsModalOpen(true)}
           className="w-full sm:w-auto px-6 py-3 bg-[#8B0000] hover:bg-brand-red-light text-[#FFFDF9] text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-colors tracking-wider"
@@ -40,150 +74,84 @@ export default function ProductsPage() {
         </button>
       </div>
 
-      {/* Products Table Card */}
       <div className="bg-[#FFFDF9] rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-[#8B0000]/20 bg-gray-50/50 text-[#8A6865] font-bold tracking-wider">
-                <th className="py-4 px-6">PRODUCT</th>
-                <th className="py-4 px-6">BRAND</th>
-                <th className="py-4 px-6">CATEGORY</th>
-                <th className="py-4 px-6">PRICE</th>
-                <th className="py-4 px-6">STOCK STATUS</th>
+              <tr className="border-b border-[#8B0000]/20 bg-gray-50/50 text-text-muted font-bold tracking-wider">
+                {COLUMNS.map((col) => (
+                  <th key={col} className="py-4 px-6">{col}</th>
+                ))}
                 <th className="py-4 px-6 text-right">ACTIONS</th>
               </tr>
             </thead>
+
             <tbody className="divide-y divide-[#8B0000]/20">
-              {filteredProducts.map((product) => (
-                <tr
-                  key={product.id}
-                  onClick={() =>
-                    router.push(`/dashboard/products/${product.id}`)
-                  }
-                  className="hover:bg-gray-50/60 cursor-pointer transition-colors"
-                >
-                  {/* Product Column */}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden shrink-0">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                          width={100}
-                          height={100}
-                        />
-                      </div>
-                      <span className="font-bold text-text-primary">
-                        {product.name}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="py-4 px-6 font-medium text-gray-600">
-                    {product.brand}
-                  </td>
-
-                  <td className="py-4 px-6 font-medium text-gray-600">
-                    {product.category}
-                  </td>
-
-                  <td className="py-4 px-6 font-bold text-text-primary">
-                    {product.price}
-                  </td>
-
-                  <td className="py-4 px-6">
-                    <span
-                      className={`px-3 py-1.5 rounded-md text-[10px] font-bold tracking-wider uppercase inline-block ${
-                        product.inStock
-                          ? "bg-emerald-100/80 text-emerald-700"
-                          : "bg-rose-100/80 text-rose-700"
-                      }`}
-                    >
-                      {product.inStock ? "IN STOCK" : "OUT OF STOCK"}
-                    </span>
-                  </td>
-
-                  {/* Actions Dropdown */}
-                  <td
-                    className="py-4 px-6 text-right relative"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+              {isLoading ? (
+                <SkeletonRows />
+              ) : isError ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center">
+                    <p className="text-sm font-bold text-rose-600">{error.message}</p>
                     <button
-                      onClick={() =>
-                        setActiveDropdown(
-                          activeDropdown === product.id ? null : product.id,
-                        )
-                      }
-                      className="p-2 text-gray-400 hover:text-gray-700 rounded-lg transition-colors"
+                      onClick={() => refetch()}
+                      className="mt-3 text-xs font-bold text-[#8B0000] hover:underline"
                     >
-                      <MoreHorizontal className="w-4 h-4" />
+                      Try again
                     </button>
-
-                    {activeDropdown === product.id && (
-                      <div className="absolute right-6 top-12 w-36 bg-[#FFFDF9] border border-gray-100 rounded-xl shadow-lg z-20 py-1.5 text-left">
-                        <button
-                          onClick={() =>
-                            router.push(`/dashboard/products/${product.id}`)
-                          }
-                          className="w-full px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                        >
-                          <Eye className="w-3.5 h-3.5 text-gray-500" /> View
-                          Details
-                        </button>
-                        <button
-                          onClick={() =>
-                            router.push(`/dashboard/products/${product.id}`)
-                          }
-                          className="w-full px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                        >
-                          <Edit className="w-3.5 h-3.5 text-gray-500" /> Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            setProducts(
-                              products.filter((p) => p.id !== product.id),
-                            );
-                            setActiveDropdown(null);
-                          }}
-                          className="w-full px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 flex items-center gap-2"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />{" "}
-                          Delete
-                        </button>
-                      </div>
-                    )}
                   </td>
                 </tr>
-              ))}
+              ) : products.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center text-sm text-gray-400">
+                    {search ? `No products match "${search}"` : "No products yet. Add your first one."}
+                  </td>
+                </tr>
+              ) : (
+                products.map((product) => (
+                  <ProductRow
+                    key={product.id}
+                    product={product}
+                    isMenuOpen={activeDropdown === product.id}
+                    onOpen={() => router.push(`/dashboard/products/${product.id}`)}
+                    onToggleMenu={() =>
+                      setActiveDropdown(activeDropdown === product.id ? null : product.id)
+                    }
+                    onToggleStock={() =>
+                      toggleStock({ id: product.id, inStock: !product.in_stock })
+                    }
+                    onDelete={() => handleDelete(product.id, product.name)}
+                  />
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <div className="flex items-center justify-between p-6 border-t border-gray-100 text-xs">
           <span className="text-gray-500 font-medium">
-            Showing 1-{filteredProducts.length} of {products.length} products
+            Showing {from}–{to} of {total} products
           </span>
-
           <div className="flex items-center gap-2">
             <button
-              disabled
-              className="px-4 py-2 bg-gray-100 text-gray-400 font-bold rounded-lg cursor-not-allowed text-[10px] tracking-wider"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 bg-[#FFFDF9] border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               PREV
             </button>
-            <button className="px-4 py-2 bg-[#FFFDF9] border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors">
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-4 py-2 bg-[#FFFDF9] border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
               NEXT
             </button>
           </div>
         </div>
       </div>
 
-      <AddProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <AddProductModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
