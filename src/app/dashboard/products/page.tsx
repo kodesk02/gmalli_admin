@@ -68,13 +68,13 @@ export default function ProductsPage() {
         />
         <button
           onClick={() => setIsModalOpen(true)}
-          className="w-full sm:w-auto px-6 py-3 bg-[#8B0000] hover:bg-brand-red-light text-[#FFFDF9] text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-colors tracking-wider"
+          className="w-full sm:w-auto px-6 py-3 bg-[#8B0000] hover:bg-brand-red-light text-surface text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-colors tracking-wider"
         >
           <Plus className="w-4 h-4" /> ADD PRODUCT
         </button>
       </div>
 
-      <div className="bg-[#FFFDF9] rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
@@ -136,14 +136,14 @@ export default function ProductsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-4 py-2 bg-[#FFFDF9] border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-surface border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               PREV
             </button>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="px-4 py-2 bg-[#FFFDF9] border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-surface border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold rounded-lg text-[10px] tracking-wider transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               NEXT
             </button>

@@ -19,6 +19,19 @@ import {
   Order,
 } from "./types";
 
+export const PRODUCT_CATEGORIES = [
+  "Kitchen Essentials",
+  "Snacks",
+  "Haircare",
+  "Bodycare",
+  "Skincare",
+  "Clothing",
+  "Frozen Produce",
+  "Fresh Produce",
+  "Eggs",
+  "Household Essentials",
+] as const;
+
 export const navItems: NavItem[] = [
   { name: "OVERVIEW", href: "/dashboard", icon: LayoutDashboard },
   { name: "PRODUCTS", href: "/dashboard/products", icon: Package },
@@ -130,7 +143,7 @@ export const initialProducts: Product[] = [
     description:
       "Rich and creamy full cream milk powder packed with essential vitamins and minerals for daily household nutrition.",
     tags: ["Milk", "Dairy", "Powder", "900g"],
-        created_at: "2023-10-01T10:00:00Z",
+    created_at: "2023-10-01T10:00:00Z",
     updated_at: "2023-10-15T14:30:00Z",
   },
   {
@@ -145,7 +158,7 @@ export const initialProducts: Product[] = [
     description:
       "Refined cholesterol-free pure vegetable cooking oil suitable for frying, baking, and all everyday culinary needs.",
     tags: ["Oil", "Cooking", "5L", "Spices"],
-        created_at: "2023-10-01T10:00:00Z",
+    created_at: "2023-10-01T10:00:00Z",
     updated_at: "2023-10-15T14:30:00Z",
   },
 ];
@@ -227,7 +240,7 @@ export const mockOrders: Order[] = [
     customer: "Tunde Alabi",
     phone: "+234 805 678 9012",
     pickupCode: "GML-7718",
-    pickupExpires: "Today, 6:00 PM", 
+    pickupExpires: "Today, 6:00 PM",
     items: 2,
     total: 8400,
     status: "pending",
@@ -261,7 +274,7 @@ export const mockOrders: Order[] = [
     phone: "+234 807 890 1234",
     pickupCode: "GML-2290",
     pickupExpires: "Yesterday, 6:00 PM",
-    collectedAt: "Collected yesterday", 
+    collectedAt: "Collected yesterday",
     items: 3,
     total: 9600,
     status: "delivered",
@@ -326,4 +339,3 @@ export const mockOrders: Order[] = [
     ],
   },
 ];
-

@@ -18,6 +18,11 @@ export interface StatCardItem {
   isRealtime?: boolean;
 }
 
+export interface AdminUser {
+  id: string;
+  email: string;
+}
+
 export type OrderStatus = "DELIVERED" | "PENDING" | "CANCELLED" | "PROCESSING";
 
 export interface RecentOrder {
@@ -98,8 +103,19 @@ export interface Product {
   in_stock: boolean;
   tags: string[];
   created_at: string;
-  description: string;
+  description: string | null;
   updated_at: string;
+}
+
+export interface ProductFormData {
+  name: string;
+  brand: string;
+  category: string;
+  price: number;
+  price_range: string;
+  description: string;
+  in_stock: boolean;
+  tags: string[];
 }
 
 export type ProductInput = Omit<Product, "id" | "created_at" | "updated_at">;

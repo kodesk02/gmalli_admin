@@ -8,20 +8,34 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLogin } from "@/hooks/useLogin";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const {mutate: login, isPending} = useLogin();
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault(); 
-    
-    console.log("Login details:", { email, password });
-    
-    router.push("/dashboard");
+    e.preventDefault();
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    login(
+      { email, password },
+      {
+        onSuccess: () => {
+          toast.success("Welcome back!");
+          router.push("/dashboard");
+        },
+        onError: (err) => toast.error(err.message),
+      }
+    );
   };
 
   return (
@@ -40,7 +54,7 @@ export function LoginForm() {
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={isLoading}
+          disabled={isPending}
           className="
             bg-[#F0E4D7] border-brand-red-light/20
             placeholder:text-[#8B0000]/30 text-[#8B0000]
@@ -66,7 +80,7 @@ export function LoginForm() {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            disabled={isLoading}
+            disabled={isPending}
             className="
               bg-[#F0E4D7] border-brand-red-light/20 pr-12
               placeholder:text-[#8B0000]/30 text-[#8B0000]
@@ -91,7 +105,7 @@ export function LoginForm() {
 
       <Button
         type="submit"
-        disabled={isLoading}
+        disabled={isPending}
         className="
           w-full h-12 rounded-xl mt-2
           bg-[#8B0000] hover:bg-brand-red-light
@@ -99,7 +113,7 @@ export function LoginForm() {
           transition-colors duration-200
         "
       >
-        {isLoading ? (
+        {isPending ? (
           <span className="flex items-center gap-2">
             <Loader2 size={18} className="animate-spin" />
             Signing in...
